@@ -12,6 +12,7 @@
 		39D0F2D41C395BE000378676 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 39D0F2D21C395BE000378676 /* Main.storyboard */; };
 		39D0F2D61C395BE000378676 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 39D0F2D51C395BE000378676 /* Assets.xcassets */; };
 		39D0F2D91C395BE000378676 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 39D0F2D71C395BE000378676 /* LaunchScreen.storyboard */; };
+		39D0F2E31C395CAD00378676 /* AdaptiveScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39D0F2E21C395CAD00378676 /* AdaptiveScrollView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -22,6 +23,7 @@
 		39D0F2D51C395BE000378676 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		39D0F2D81C395BE000378676 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		39D0F2DA1C395BE000378676 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		39D0F2E21C395CAD00378676 /* AdaptiveScrollView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AdaptiveScrollView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -54,6 +56,8 @@
 		39D0F2CD1C395BE000378676 /* reusable-classes-ios */ = {
 			isa = PBXGroup;
 			children = (
+				39D0F2E11C395C9800378676 /* Examples */,
+				39D0F2E01C395C9100378676 /* Source */,
 				39D0F2CE1C395BE000378676 /* AppDelegate.swift */,
 				39D0F2D01C395BE000378676 /* ViewController.swift */,
 				39D0F2D21C395BE000378676 /* Main.storyboard */,
@@ -62,6 +66,21 @@
 				39D0F2DA1C395BE000378676 /* Info.plist */,
 			);
 			path = "reusable-classes-ios";
+			sourceTree = "<group>";
+		};
+		39D0F2E01C395C9100378676 /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				39D0F2E21C395CAD00378676 /* AdaptiveScrollView.swift */,
+			);
+			name = Source;
+			sourceTree = "<group>";
+		};
+		39D0F2E11C395C9800378676 /* Examples */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Examples;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -137,6 +156,7 @@
 			files = (
 				39D0F2D11C395BE000378676 /* ViewController.swift in Sources */,
 				39D0F2CF1C395BE000378676 /* AppDelegate.swift in Sources */,
+				39D0F2E31C395CAD00378676 /* AdaptiveScrollView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
