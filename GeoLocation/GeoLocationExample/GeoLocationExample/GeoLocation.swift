@@ -99,14 +99,31 @@ extension GeoLocation {
     
     func placemarksForAddress(address: String, service: MapService) -> ([CLPlacemark]?, String?) {
         
+        switch service {
+            case .Apple: return applePlacemarkForAddress(address)
+            case .Google: return googlePlacemarkForAddress(address)
+        }
+    }
+    
+    private func applePlacemarkForAddress(address: String) -> ([CLPlacemark]?, String?) {
+        var errorString: String?
+        var foundPlaceMarks: [CLPlacemark]?
+        geocoder.geocodeAddressString(address, completionHandler: { (placemarks, error) in
+            if error != nil {
+                errorString = error?.localizedDescription
+            } else {
+                if placemarks != nil  {
+                    foundPlaceMarks = placemarks
+                    errorString = nil
+                } else {
+                    foundPlaceMarks = nil
+                }
+            }
+        })
+        return (foundPlaceMarks, errorString)
     }
     
     private func googlePlacemarkForAddress(address: String) -> ([CLPlacemark]?, String?) {
         
     }
-    
-    private func applePlacemarkForAddress(address: String) -> ([CLPlacemark]?, String?) {
-        
-    }
-    
 }
