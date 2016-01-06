@@ -14,9 +14,13 @@ class CurrentLocationScreen: UIViewController {
     private var map: MKMapView!
     
     private var geoLocation = GeoLocation.shared
+    private var screenHeight, screenWidth: CGFloat!
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        screenHeight = view.frame.height
+        screenWidth = view.frame.width
         
         setupMap()
         addButton()
@@ -33,11 +37,17 @@ class CurrentLocationScreen: UIViewController {
     }
     
     private func addButton() {
-        let button = UIButton(type: .Custom)
-        button.frame = CGRectMake(30, 50, 100, 100)
-        button.backgroundColor = UIColor.redColor()
-        view.addSubview(button)
-        button.addTarget(self, action: Selector("gotoCurrentLocation"), forControlEvents: .TouchUpInside)
+        let currentLocationButton = UIButton(type: .Custom)
+        currentLocationButton.frame = CGRectMake(screenWidth * 0.8, screenHeight * 0.1, 50, screenHeight * 0.1)
+        currentLocationButton.backgroundColor = UIColor.lightGrayColor()
+        view.addSubview(currentLocationButton)
+        currentLocationButton.addTarget(self, action: Selector("gotoCurrentLocation"), forControlEvents: .TouchUpInside)
+        
+        let goBackButton = UIButton(type: .Custom)
+        goBackButton.frame = CGRectMake(30, screenHeight * 0.8, 50, screenHeight * 0.1)
+        goBackButton.backgroundColor = UIColor.lightGrayColor()
+        view.addSubview(goBackButton)
+        goBackButton.addTarget(self, action: Selector("dismissScreen"), forControlEvents: .TouchUpInside)
     }
     
     func gotoCurrentLocation() {
@@ -53,6 +63,11 @@ class CurrentLocationScreen: UIViewController {
         map.addAnnotation(LocationAnnotation(coordinate: currentLocation.coordinate))
     }
     
+    func dismissScreen() {
+        dismissViewControllerAnimated(true, completion: nil)
+    }
+    
+    // MARK: - Map view delegates
     func mapView(mapView: MKMapView, viewForAnnotation annotation: MKAnnotation) -> MKAnnotationView? {
         
         if let annotation = annotation as? LocationAnnotation {
