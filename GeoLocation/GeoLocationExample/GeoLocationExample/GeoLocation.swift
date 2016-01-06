@@ -11,12 +11,18 @@ import UIKit
 import CoreLocation
 import MapKit
 
+enum MapService: Int {
+    case Apple, Google
+}
+
 class GeoLocation: NSObject, CLLocationManagerDelegate, UIAlertViewDelegate {
     
     static let shared = GeoLocation()
     
     private var manager: CLLocationManager!
     private var locations: [CLLocation]
+    
+    private let geocoder = CLGeocoder()
     
     override private init() {
         manager = CLLocationManager()
@@ -89,4 +95,18 @@ class GeoLocation: NSObject, CLLocationManagerDelegate, UIAlertViewDelegate {
     }
 }
 
-
+extension GeoLocation {
+    
+    func placemarksForAddress(address: String, service: MapService) -> ([CLPlacemark]?, String?) {
+        
+    }
+    
+    private func googlePlacemarkForAddress(address: String) -> ([CLPlacemark]?, String?) {
+        
+    }
+    
+    private func applePlacemarkForAddress(address: String) -> ([CLPlacemark]?, String?) {
+        
+    }
+    
+}
