@@ -21,7 +21,8 @@ class GeoLocation: NSObject, CLLocationManagerDelegate, UIAlertViewDelegate {
     
     private var manager: CLLocationManager!
     private var locations: [CLLocation]
-    
+    private var forwardGeocodedPlacemarks: [CLPlacemark]?
+    private var errorString: String?
     private let geocoder = CLGeocoder()
     
     override private init() {
@@ -106,24 +107,14 @@ extension GeoLocation {
     }
     
     private func applePlacemarkForAddress(address: String) -> ([CLPlacemark]?, String?) {
-        var errorString: String?
-        var foundPlaceMarks: [CLPlacemark]?
         geocoder.geocodeAddressString(address, completionHandler: { (placemarks, error) in
-            if error != nil {
-                errorString = error?.localizedDescription
-            } else {
-                if placemarks != nil  {
-                    foundPlaceMarks = placemarks
-                    errorString = nil
-                } else {
-                    foundPlaceMarks = nil
-                }
-            }
+            self.forwardGeocodedPlacemarks = placemarks
+            self.errorString = error?.localizedDescription
         })
-        return (foundPlaceMarks, errorString)
+        return (forwardGeocodedPlacemarks, errorString)
     }
     
     private func googlePlacemarkForAddress(address: String) -> ([CLPlacemark]?, String?) {
-        
+            return (nil, nil)
     }
 }

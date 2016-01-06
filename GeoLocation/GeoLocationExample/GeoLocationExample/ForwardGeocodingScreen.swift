@@ -9,11 +9,10 @@
 import UIKit
 import MapKit
 
-class ForwardGeocodingScreen: UIViewController {
+class ForwardGeocodingScreen: UIViewController, UISearchBarDelegate {
 
     private var map: MKMapView!
     
-    private var geoLocation = GeoLocation.shared
     private var screenHeight, screenWidth: CGFloat!
     
     override func viewDidLoad() {
@@ -21,55 +20,53 @@ class ForwardGeocodingScreen: UIViewController {
         
         screenHeight = view.frame.height
         screenWidth = view.frame.width
+        view.backgroundColor = UIColor.blueColor()
         
         setupMap()
-        addButton()
-        geoLocation.startUpdatingLocation()
-    }
-    
-    override func viewWillLayoutSubviews() {
-        map.frame = view.frame
+        setupView()
     }
     
     private func setupMap() {
-        map = MKMapView(frame: view.frame)
+        map = MKMapView(frame: CGRectMake(0, 0, screenWidth, screenHeight / 2))
         view.addSubview(map)
     }
     
-    private func addButton() {
-        let currentLocationButton = UIButton(type: .Custom)
-        currentLocationButton.frame = CGRectMake(screenWidth * 0.8, screenHeight * 0.1, 50, screenHeight * 0.1)
-        currentLocationButton.backgroundColor = UIColor.lightGrayColor()
-        view.addSubview(currentLocationButton)
-        currentLocationButton.addTarget(self, action: Selector("gotoCurrentLocation"), forControlEvents: .TouchUpInside)
-        
-        let goBackButton = UIButton(type: .Custom)
-        goBackButton.frame = CGRectMake(30, screenHeight * 0.8, 50, screenHeight * 0.1)
-        goBackButton.backgroundColor = UIColor.lightGrayColor()
-        view.addSubview(goBackButton)
-        goBackButton.addTarget(self, action: Selector("dismissScreen"), forControlEvents: .TouchUpInside)
+    private func setupView() {
+        let searchBar = UISearchBar(frame: CGRectMake(0, screenHeight / 2 + 10.0, screenWidth, 40))
+        view.addSubview(searchBar)
+        searchBar.placeholder = "Look for a place"
+        searchBar.delegate = self
     }
     
-    func gotoCurrentLocation() {
-        let currentLocation = GeoLocation.shared.currentLocation()
-        //        map.setRegion(MKCoordinateRegionMakeWithDistance(currentLocation.coordinate, 5000000, 0), animated: true)
+    func addAnnotationOnLocationCoordinate(coordinates: CLLocationCoordinate2D) {
         if let annotations = map.annotations as? [LocationAnnotation] {
             for annotation in annotations {
-                if annotation.coordinate.latitude == currentLocation.coordinate.latitude && annotation.coordinate.longitude == currentLocation.coordinate.longitude {
+                if annotation.coordinate.latitude == coordinates.latitude && annotation.coordinate.longitude == coordinates.longitude {
                     return
                 }
             }
         }
-        map.addAnnotation(LocationAnnotation(coordinate: currentLocation.coordinate))
+        map.addAnnotation(LocationAnnotation(coordinate: coordinates))
     }
     
     func dismissScreen() {
         dismissViewControllerAnimated(true, completion: nil)
     }
     
+    //MARK: - Search Bar delegates
+    
+    func searchBar(searchBar: UISearchBar, textDidChange searchText: String) {
+
+        map.removeAnnotations(map.annotations)
+        let foundPlacemark = GeoLocation.shared.placemarksForAddress(searchText, service: .Apple).0?.first
+
+        if foundPlacemark != nil {
+            addAnnotationOnLocationCoordinate((foundPlacemark?.location?.coordinate)!)
+        }
+    }
+    
     // MARK: - Map view delegates
     func mapView(mapView: MKMapView, viewForAnnotation annotation: MKAnnotation) -> MKAnnotationView? {
-        
         if let annotation = annotation as? LocationAnnotation {
             let identifier = "pin"
             var view: MKPinAnnotationView

@@ -52,19 +52,22 @@ class CurrentLocationScreen: UIViewController {
     
     func gotoCurrentLocation() {
         let currentLocation = GeoLocation.shared.currentLocation()
-        //        map.setRegion(MKCoordinateRegionMakeWithDistance(currentLocation.coordinate, 5000000, 0), animated: true)
-        if let annotations = map.annotations as? [LocationAnnotation] {
-            for annotation in annotations {
-                if annotation.coordinate.latitude == currentLocation.coordinate.latitude && annotation.coordinate.longitude == currentLocation.coordinate.longitude {
-                    return
-                }
-            }
-        }
-        map.addAnnotation(LocationAnnotation(coordinate: currentLocation.coordinate))
+        addAnnotationOnLocationCoordinate(currentLocation.coordinate)
     }
     
     func dismissScreen() {
         dismissViewControllerAnimated(true, completion: nil)
+    }
+    
+    func addAnnotationOnLocationCoordinate(coordinates: CLLocationCoordinate2D) {
+        if let annotations = map.annotations as? [LocationAnnotation] {
+            for annotation in annotations {
+                if annotation.coordinate.latitude == coordinates.latitude && annotation.coordinate.longitude == coordinates.longitude {
+                    return
+                }
+            }
+        }
+        map.addAnnotation(LocationAnnotation(coordinate: coordinates))
     }
     
     // MARK: - Map view delegates
