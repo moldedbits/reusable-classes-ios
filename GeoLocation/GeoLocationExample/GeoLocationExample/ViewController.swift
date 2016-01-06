@@ -12,45 +12,40 @@ import CoreLocation
 
 class ViewController: UIViewController {
     
-    private var map: MKMapView!
-    
-    private var geoLocation = GeoLocation.shared
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        setupMap()
-        addButton()
-        geoLocation.startUpdatingLocation()
-    }
-    
-    override func viewWillLayoutSubviews() {
-        map.frame = view.frame
-    }
-    
-    private func setupMap() {
-        map = MKMapView(frame: view.frame)
-        view.addSubview(map)
-    }
-    
-    private func addButton() {
-        let button = UIButton(type: .Custom)
-        button.frame = CGRectMake(30, 50, 100, 100)
-        button.backgroundColor = UIColor.redColor()
-        view.addSubview(button)
-        button.addTarget(self, action: Selector("gotoCurrentLocation"), forControlEvents: .TouchUpInside)
-    }
-    
-    func gotoCurrentLocation() {
-        let currentLocation = GeoLocation.shared.currentLocation()
-        //        map.setRegion(MKCoordinateRegionMakeWithDistance(currentLocation.coordinate, 5000000, 0), animated: true)
-        if let annotations = map.annotations as? [LocationAnnotation] {
-            for annotation in annotations {
-                if annotation.coordinate.latitude == currentLocation.coordinate.latitude && annotation.coordinate.longitude == currentLocation.coordinate.longitude {
-                    return
-                }
+        for i in 0...3 {
+            let button = UIButton(type: .Custom)
+            button.layer.borderColor = UIColor.blackColor().CGColor
+            button.layer.cornerRadius = 10
+            button.backgroundColor = UIColor(white: 0.5, alpha: 1)
+            button.frame = CGRectMake(0, 60.0 + CGFloat(80 * i), 200.0, 60.0)
+            button.center = CGPoint(x: view.center.x, y: button.center.y)
+            button.addTarget(self, action: Selector("buttonTapped:"), forControlEvents: .TouchUpInside)
+            button.tag = i
+            view.addSubview(button)
+
+            switch i {
+                case 0:
+                    button.setTitle( "Current Location Demo", forState: .Normal)
+                case 1:
+                    button.setTitle("Forward Geocode Demo", forState: .Normal)
+                case 2:
+                    button.setTitle("Reverse Geocode Demo", forState: .Normal)
+                default:
+                    button.setTitle("Under Progress", forState: .Normal)
             }
         }
-        map.addAnnotation(LocationAnnotation(coordinate: currentLocation.coordinate))
+    }
+    
+    func buttonTapped(sender: AnyObject) {
+        switch sender.tag {
+            case 0:
+                let newScreen = CurrentLocationScreen()
+                navigationController?.pushViewController(newScreen, animated: true)
+            
+        default: return
+        }
     }
 }

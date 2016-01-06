@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C96EA5161C3D0EEB003B615F /* CurrentLocationScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = C96EA5151C3D0EEB003B615F /* CurrentLocationScreen.swift */; };
+		C96EA51A1C3D0F3A003B615F /* ReverseGeocodingScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = C96EA5191C3D0F3A003B615F /* ReverseGeocodingScreen.swift */; };
+		C96EA51C1C3D0F75003B615F /* ForwardGeocodingScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = C96EA51B1C3D0F75003B615F /* ForwardGeocodingScreen.swift */; };
 		C9742FA21C3A509400767CEC /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9742FA11C3A509400767CEC /* AppDelegate.swift */; };
 		C9742FA41C3A509400767CEC /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9742FA31C3A509400767CEC /* ViewController.swift */; };
 		C9742FA71C3A509400767CEC /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C9742FA51C3A509400767CEC /* Main.storyboard */; };
@@ -14,10 +17,12 @@
 		C9742FAC1C3A509400767CEC /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C9742FAA1C3A509400767CEC /* LaunchScreen.storyboard */; };
 		C9742FB51C3A5A8B00767CEC /* GeoLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9742FB41C3A5A8B00767CEC /* GeoLocation.swift */; };
 		C9742FB81C3A5ACD00767CEC /* LocationAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9742FB61C3A5ACD00767CEC /* LocationAnnotation.swift */; };
-		C9742FB91C3A5ACD00767CEC /* VCMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9742FB71C3A5ACD00767CEC /* VCMapView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		C96EA5151C3D0EEB003B615F /* CurrentLocationScreen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CurrentLocationScreen.swift; sourceTree = "<group>"; };
+		C96EA5191C3D0F3A003B615F /* ReverseGeocodingScreen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReverseGeocodingScreen.swift; sourceTree = "<group>"; };
+		C96EA51B1C3D0F75003B615F /* ForwardGeocodingScreen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ForwardGeocodingScreen.swift; sourceTree = "<group>"; };
 		C9742F9E1C3A509400767CEC /* GeoLocationExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GeoLocationExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C9742FA11C3A509400767CEC /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C9742FA31C3A509400767CEC /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -27,7 +32,6 @@
 		C9742FAD1C3A509400767CEC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C9742FB41C3A5A8B00767CEC /* GeoLocation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GeoLocation.swift; sourceTree = "<group>"; };
 		C9742FB61C3A5ACD00767CEC /* LocationAnnotation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationAnnotation.swift; sourceTree = "<group>"; };
-		C9742FB71C3A5ACD00767CEC /* VCMapView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VCMapView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -41,6 +45,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		C96EA5141C3D0EBF003B615F /* Screens */ = {
+			isa = PBXGroup;
+			children = (
+				C96EA5151C3D0EEB003B615F /* CurrentLocationScreen.swift */,
+				C96EA5191C3D0F3A003B615F /* ReverseGeocodingScreen.swift */,
+				C96EA51B1C3D0F75003B615F /* ForwardGeocodingScreen.swift */,
+			);
+			name = Screens;
+			sourceTree = "<group>";
+		};
 		C9742F951C3A509400767CEC = {
 			isa = PBXGroup;
 			children = (
@@ -60,9 +74,9 @@
 		C9742FA01C3A509400767CEC /* GeoLocationExample */ = {
 			isa = PBXGroup;
 			children = (
+				C96EA5141C3D0EBF003B615F /* Screens */,
 				C9742FB31C3A509C00767CEC /* GeoLocation */,
 				C9742FB61C3A5ACD00767CEC /* LocationAnnotation.swift */,
-				C9742FB71C3A5ACD00767CEC /* VCMapView.swift */,
 				C9742FA31C3A509400767CEC /* ViewController.swift */,
 				C9742FAD1C3A509400767CEC /* Info.plist */,
 				C9742FA11C3A509400767CEC /* AppDelegate.swift */,
@@ -154,8 +168,10 @@
 			files = (
 				C9742FB51C3A5A8B00767CEC /* GeoLocation.swift in Sources */,
 				C9742FA41C3A509400767CEC /* ViewController.swift in Sources */,
-				C9742FB91C3A5ACD00767CEC /* VCMapView.swift in Sources */,
+				C96EA51A1C3D0F3A003B615F /* ReverseGeocodingScreen.swift in Sources */,
+				C96EA51C1C3D0F75003B615F /* ForwardGeocodingScreen.swift in Sources */,
 				C9742FA21C3A509400767CEC /* AppDelegate.swift in Sources */,
+				C96EA5161C3D0EEB003B615F /* CurrentLocationScreen.swift in Sources */,
 				C9742FB81C3A5ACD00767CEC /* LocationAnnotation.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -306,6 +322,7 @@
 				C9742FB21C3A509400767CEC /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

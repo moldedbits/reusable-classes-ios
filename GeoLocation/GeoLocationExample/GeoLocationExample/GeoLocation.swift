@@ -88,3 +88,5 @@ class GeoLocation: NSObject, CLLocationManagerDelegate, UIAlertViewDelegate {
         locations.append(newLocation)
     }
 }
+
+
