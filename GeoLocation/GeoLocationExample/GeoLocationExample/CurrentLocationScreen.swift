@@ -76,7 +76,7 @@ class CurrentLocationScreen: UIViewController, GeoLocationDelegate {
         if let updatedLocation = locations?.last {
             addAnnotationOnLocationCoordinate(updatedLocation.coordinate)
         } else if let errorOccured = error {
-            print(errorOccured.localizedDescription)
+            displayError(errorOccured)
         }
     }
 

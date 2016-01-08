@@ -106,8 +106,7 @@ class ReverseGeocodingScreen: UIViewController, UITextFieldDelegate, GeoLocation
                 addAnnotationOnLocationCoordinate((foundPlacemark.location?.coordinate)!, name: foundPlacemark.name, info: foundPlacemark.administrativeArea)
             }
         } else if let errorOccured = error {
-            print(errorOccured.localizedDescription)
-            print(errorOccured.localizedFailureReason)
+            displayError(errorOccured)
         }
     }
     

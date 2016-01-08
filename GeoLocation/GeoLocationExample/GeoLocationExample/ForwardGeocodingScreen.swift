@@ -93,7 +93,7 @@ class ForwardGeocodingScreen: UIViewController, UISearchBarDelegate, GeoLocation
                 addAnnotationOnLocationCoordinate((foundPlacemark.location?.coordinate)!, name: foundPlacemark.name, info: foundPlacemark.administrativeArea)
             }
         } else if let errorOccured = error {
-            print(errorOccured.localizedDescription)
+            displayError(errorOccured)
         }
     }
     

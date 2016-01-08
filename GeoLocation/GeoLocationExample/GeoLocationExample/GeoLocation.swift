@@ -66,7 +66,7 @@ class GeoLocation: NSObject, CLLocationManagerDelegate, UIAlertViewDelegate {
             requestToEnableLocationServices()
         } else {
             if (CLLocationManager.authorizationStatus() == .AuthorizedAlways) || (CLLocationManager.authorizationStatus() == .AuthorizedWhenInUse) {
-//                startUpdatingLocation()
+
             } else if (CLLocationManager.authorizationStatus() == .Denied) || (CLLocationManager.authorizationStatus() == .NotDetermined){
                 askToChangeSettings()
             }
@@ -148,7 +148,6 @@ extension GeoLocation {
     
     private func applePlacemarkForCoordinates(coordinates: CLLocationCoordinate2D) {
         geocoder.reverseGeocodeLocation(CLLocation(latitude: coordinates.latitude, longitude: coordinates.longitude), completionHandler: { (placemarks, error) in
-            print(placemarks?.count)
             self.delegate?.geoLocationDidFindPlacemarks?(placemarks, withError: error, forCoordinates: coordinates)
         })
     }
