@@ -7,8 +7,6 @@
 //
 
 import UIKit
-import MapKit
-import CoreLocation
 
 class ViewController: UIViewController {
     
@@ -20,6 +18,8 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        GeoLocation.shared.requestAlwaysAuthorization()
+
         screenHeight = view.frame.height
         screenWidth = view.frame.width
         

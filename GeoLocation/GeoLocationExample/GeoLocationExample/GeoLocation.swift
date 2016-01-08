@@ -21,9 +21,13 @@ class GeoLocation: NSObject, CLLocationManagerDelegate, UIAlertViewDelegate {
     
     private var manager: CLLocationManager!
     private var locations: [CLLocation]
-    private var forwardGeocodedPlacemarks: [CLPlacemark]?
-    private var errorString: String?
     private let geocoder = CLGeocoder()
+    
+    var forwardGeocodedPlacemarks: [CLPlacemark]?
+    var forwardErrorString: String?
+    var accuracy = kCLLocationAccuracyThreeKilometers
+
+    var delegate: GeoLocationDelegate?
     
     override private init() {
         manager = CLLocationManager()
@@ -33,13 +37,18 @@ class GeoLocation: NSObject, CLLocationManagerDelegate, UIAlertViewDelegate {
         
         manager.delegate = self
         manager.requestAlwaysAuthorization()
-        manager.desiredAccuracy = kCLLocationAccuracyThreeKilometers
-        
-        checkLocationServices()
+        manager.desiredAccuracy = self.accuracy
+    }
+    
+    func requestAlwaysAuthorization() {
+        manager.requestAlwaysAuthorization()
+    }
+    
+    func requestWhenInUseAuthorization() {
+        manager.requestWhenInUseAuthorization()
     }
     
     func startUpdatingLocation() {
-        manager.requestAlwaysAuthorization()
         manager.startUpdatingLocation()
     }
     
@@ -47,9 +56,9 @@ class GeoLocation: NSObject, CLLocationManagerDelegate, UIAlertViewDelegate {
         manager.stopUpdatingLocation()
     }
     
-    func currentLocation() -> CLLocation {
+    func getCurrentLocation() {
         checkLocationServices()
-        return locations.last!
+        manager.requestLocation()
     }
     
     private func checkLocationServices() {
@@ -57,7 +66,7 @@ class GeoLocation: NSObject, CLLocationManagerDelegate, UIAlertViewDelegate {
             requestToEnableLocationServices()
         } else {
             if (CLLocationManager.authorizationStatus() == .AuthorizedAlways) || (CLLocationManager.authorizationStatus() == .AuthorizedWhenInUse) {
-                startUpdatingLocation()
+//                startUpdatingLocation()
             } else if (CLLocationManager.authorizationStatus() == .Denied) || (CLLocationManager.authorizationStatus() == .NotDetermined){
                 askToChangeSettings()
             }
@@ -93,28 +102,64 @@ class GeoLocation: NSObject, CLLocationManagerDelegate, UIAlertViewDelegate {
     
     func locationManager(manager: CLLocationManager, didUpdateToLocation newLocation: CLLocation, fromLocation oldLocation: CLLocation) {
         locations.append(newLocation)
+        delegate?.geoLocationDidUpdateCurrentLocations?(locations, withError: nil)
+    }
+    
+    func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        self.locations.append(locations.last!)
+        delegate?.geoLocationDidUpdateCurrentLocations?(locations, withError: nil)
+    }
+    
+    func locationManager(manager: CLLocationManager, didFailWithError error: NSError) {
+        delegate?.geoLocationDidUpdateCurrentLocations?(nil, withError: error)
+    }
+}
+
+extension GeoLocation {
+
+    //MARK: - Forward Geocoding
+    func findPlacemarksForAddress(address: String, inRegion region: CLRegion?, service: MapService) {
+        switch service {
+            case .Apple: return applePlacemarkForAddress(address, inRegion: region)
+            case .Google: return googlePlacemarkForAddress(address)
+        }
+    }
+    
+    private func applePlacemarkForAddress(address: String, inRegion region: CLRegion?) {
+        geocoder.geocodeAddressString(address, inRegion: region, completionHandler: { (placemarks, error) in
+                self.delegate?.geoLocationDidFindPlacemarks?(placemarks, withError: error, forAddressString: address, inRegion: region)
+        })
+    }
+    
+    private func googlePlacemarkForAddress(address: String) {
+        
     }
 }
 
 extension GeoLocation {
     
-    func placemarksForAddress(address: String, service: MapService) -> ([CLPlacemark]?, String?) {
-        
+    //MARK:- Reverse Geocoding
+    func findPlacemarkForCoordinates(coordinates: CLLocationCoordinate2D, service: MapService) {
         switch service {
-            case .Apple: return applePlacemarkForAddress(address)
-            case .Google: return googlePlacemarkForAddress(address)
+            case .Apple: applePlacemarkForCoordinates(coordinates)
+            case .Google: googlePlacemarkForCoordinates(coordinates)
         }
     }
     
-    private func applePlacemarkForAddress(address: String) -> ([CLPlacemark]?, String?) {
-        geocoder.geocodeAddressString(address, completionHandler: { (placemarks, error) in
-            self.forwardGeocodedPlacemarks = placemarks
-            self.errorString = error?.localizedDescription
+    private func applePlacemarkForCoordinates(coordinates: CLLocationCoordinate2D) {
+        geocoder.reverseGeocodeLocation(CLLocation(latitude: coordinates.latitude, longitude: coordinates.longitude), completionHandler: { (placemarks, error) in
+            print(placemarks?.count)
+            self.delegate?.geoLocationDidFindPlacemarks?(placemarks, withError: error, forCoordinates: coordinates)
         })
-        return (forwardGeocodedPlacemarks, errorString)
     }
     
-    private func googlePlacemarkForAddress(address: String) -> ([CLPlacemark]?, String?) {
-            return (nil, nil)
+    private func googlePlacemarkForCoordinates(coordinates: CLLocationCoordinate2D) {
+        
     }
+}
+
+@objc public protocol GeoLocationDelegate: NSObjectProtocol {
+    optional func geoLocationDidUpdateCurrentLocations(locations: [CLLocation]?, withError error: NSError?)
+    optional func geoLocationDidFindPlacemarks(placemarks: [CLPlacemark]?, withError error: NSError?, forAddressString address: String, inRegion region: CLRegion?)
+    optional func geoLocationDidFindPlacemarks(placemarks: [CLPlacemark]?, withError error: NSError?, forCoordinates coordinates: CLLocationCoordinate2D)
 }

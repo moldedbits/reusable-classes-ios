@@ -9,15 +9,18 @@
 import UIKit
 import MapKit
 
-class ForwardGeocodingScreen: UIViewController, UISearchBarDelegate {
+class ForwardGeocodingScreen: UIViewController, UISearchBarDelegate, GeoLocationDelegate {
 
     private var map: MKMapView!
-    
     private var screenHeight, screenWidth: CGFloat!
+
+    private let searchBar = UISearchBar()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        GeoLocation.shared.delegate = self
+
         screenHeight = view.frame.height
         screenWidth = view.frame.width
         view.backgroundColor = UIColor.blueColor()
@@ -32,13 +35,40 @@ class ForwardGeocodingScreen: UIViewController, UISearchBarDelegate {
     }
     
     private func setupView() {
-        let searchBar = UISearchBar(frame: CGRectMake(0, screenHeight / 2 + 10.0, screenWidth, 40))
+        setupButtons()
+        setupSearchBar()
+    }
+    
+    private func setupButtons() {
+        let currentLocationButton = UIButton(type: .DetailDisclosure)
+        currentLocationButton.frame = CGRectMake(screenWidth * 0.8, screenHeight * 0.8, 50, screenHeight * 0.1)
+        currentLocationButton.backgroundColor = UIColor.clearColor()
+        view.addSubview(currentLocationButton)
+        currentLocationButton.addTarget(self, action: Selector("searchAddress"), forControlEvents: .TouchUpInside)
+        
+        let goBackButton = UIButton(type: .Custom)
+        goBackButton.frame = CGRectMake(30, screenHeight * 0.8, 50, screenHeight * 0.1)
+        goBackButton.backgroundColor = UIColor.lightGrayColor()
+        view.addSubview(goBackButton)
+        goBackButton.addTarget(self, action: Selector("dismissScreen"), forControlEvents: .TouchUpInside)
+    }
+    
+    private func setupSearchBar() {
+        searchBar.frame = CGRectMake(0, screenHeight / 2 + 10.0, screenWidth, 40)
         view.addSubview(searchBar)
         searchBar.placeholder = "Look for a place"
         searchBar.delegate = self
     }
     
-    func addAnnotationOnLocationCoordinate(coordinates: CLLocationCoordinate2D) {
+    func dismissScreen() {
+        dismissViewControllerAnimated(true, completion: nil)
+    }
+    
+    func searchAddress() {
+        GeoLocation.shared.findPlacemarksForAddress(searchBar.text!, inRegion: nil, service: .Apple)
+    }
+
+    private func addAnnotationOnLocationCoordinate(coordinates: CLLocationCoordinate2D, name: String?, info: String?) {
         if let annotations = map.annotations as? [LocationAnnotation] {
             for annotation in annotations {
                 if annotation.coordinate.latitude == coordinates.latitude && annotation.coordinate.longitude == coordinates.longitude {
@@ -46,22 +76,24 @@ class ForwardGeocodingScreen: UIViewController, UISearchBarDelegate {
                 }
             }
         }
-        map.addAnnotation(LocationAnnotation(coordinate: coordinates))
-    }
-    
-    func dismissScreen() {
-        dismissViewControllerAnimated(true, completion: nil)
+        map.addAnnotation(LocationAnnotation(coordinate: coordinates, name: name, info: info))
     }
     
     //MARK: - Search Bar delegates
     
-    func searchBar(searchBar: UISearchBar, textDidChange searchText: String) {
+    func searchBarSearchButtonClicked(searchBar: UISearchBar) {
+        searchAddress()
+    }
 
-        map.removeAnnotations(map.annotations)
-        let foundPlacemark = GeoLocation.shared.placemarksForAddress(searchText, service: .Apple).0?.first
-
-        if foundPlacemark != nil {
-            addAnnotationOnLocationCoordinate((foundPlacemark?.location?.coordinate)!)
+    //MARK: - GeoLocation Delegate
+    
+    func geoLocationDidFindPlacemarks(placemarks: [CLPlacemark]?, withError error: NSError?, forAddressString address: String, inRegion region: CLRegion?) {
+        if let foundPlacemarks = placemarks {
+            for foundPlacemark in foundPlacemarks {
+                addAnnotationOnLocationCoordinate((foundPlacemark.location?.coordinate)!, name: foundPlacemark.name, info: foundPlacemark.administrativeArea)
+            }
+        } else if let errorOccured = error {
+            print(errorOccured.localizedDescription)
         }
     }
     

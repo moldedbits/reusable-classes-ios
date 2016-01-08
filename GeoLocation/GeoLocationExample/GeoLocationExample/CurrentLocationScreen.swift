@@ -9,22 +9,21 @@
 import UIKit
 import MapKit
 
-class CurrentLocationScreen: UIViewController {
+class CurrentLocationScreen: UIViewController, GeoLocationDelegate {
     
     private var map: MKMapView!
     
-    private var geoLocation = GeoLocation.shared
     private var screenHeight, screenWidth: CGFloat!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        GeoLocation.shared.delegate = self
         screenHeight = view.frame.height
         screenWidth = view.frame.width
         
         setupMap()
-        addButton()
-        geoLocation.startUpdatingLocation()
+        setupButton()
     }
     
     override func viewWillLayoutSubviews() {
@@ -36,7 +35,7 @@ class CurrentLocationScreen: UIViewController {
         view.addSubview(map)
     }
     
-    private func addButton() {
+    private func setupButton() {
         let currentLocationButton = UIButton(type: .Custom)
         currentLocationButton.frame = CGRectMake(screenWidth * 0.8, screenHeight * 0.1, 50, screenHeight * 0.1)
         currentLocationButton.backgroundColor = UIColor.lightGrayColor()
@@ -51,8 +50,8 @@ class CurrentLocationScreen: UIViewController {
     }
     
     func gotoCurrentLocation() {
-        let currentLocation = GeoLocation.shared.currentLocation()
-        addAnnotationOnLocationCoordinate(currentLocation.coordinate)
+        GeoLocation.shared.accuracy = kCLLocationAccuracyBest
+        GeoLocation.shared.getCurrentLocation()
     }
     
     func dismissScreen() {
@@ -67,10 +66,21 @@ class CurrentLocationScreen: UIViewController {
                 }
             }
         }
-        map.addAnnotation(LocationAnnotation(coordinate: coordinates))
+        map.removeAnnotations(map.annotations)
+        map.addAnnotation(LocationAnnotation(coordinate: coordinates, name: "Current Location", info: nil))
     }
     
-    // MARK: - Map view delegates
+    //MARK: - GeoLocation delegates
+    
+    func geoLocationDidUpdateCurrentLocations(locations: [CLLocation]?, withError error: NSError?) {
+        if let updatedLocation = locations?.last {
+            addAnnotationOnLocationCoordinate(updatedLocation.coordinate)
+        } else if let errorOccured = error {
+            print(errorOccured.localizedDescription)
+        }
+    }
+
+    //MARK: - Map view delegates
     func mapView(mapView: MKMapView, viewForAnnotation annotation: MKAnnotation) -> MKAnnotationView? {
         
         if let annotation = annotation as? LocationAnnotation {
@@ -90,5 +100,4 @@ class CurrentLocationScreen: UIViewController {
         }
         return nil
     }
-
 }
