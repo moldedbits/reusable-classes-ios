@@ -37,6 +37,8 @@ class ForwardGeocodingScreen: UIViewController, UISearchBarDelegate, GeoLocation
     private func setupView() {
         setupButtons()
         setupSearchBar()
+        let tap = UITapGestureRecognizer(target: self, action: Selector("dismissKeyboard:"))
+        view.addGestureRecognizer(tap)
     }
     
     private func setupButtons() {

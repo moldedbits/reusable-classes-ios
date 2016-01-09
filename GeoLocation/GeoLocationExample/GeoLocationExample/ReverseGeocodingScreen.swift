@@ -39,6 +39,8 @@ class ReverseGeocodingScreen: UIViewController, UITextFieldDelegate, GeoLocation
     private func setupView() {
         addTextFields()
         addButtons()
+        let tap = UITapGestureRecognizer(target: self, action: Selector("dismissKeyboard:"))
+        view.addGestureRecognizer(tap)
     }
 
     private func addTextFields() {

@@ -69,5 +69,8 @@ extension UIViewController {
     func dismissScreen() {
         dismissViewControllerAnimated(true, completion: nil)
     }
-        
+    
+    func dismissKeyboard(sender: UIGestureRecognizer) {
+        view.endEditing(true)
+    }
 }
