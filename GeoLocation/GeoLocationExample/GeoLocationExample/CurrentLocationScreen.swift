@@ -50,7 +50,7 @@ class CurrentLocationScreen: UIViewController, GeoLocationDelegate {
     }
     
     func gotoCurrentLocation() {
-        GeoLocation.shared.accuracy = kCLLocationAccuracyBest
+        GeoLocation.shared.accuracy = kCLLocationAccuracyNearestTenMeters
         GeoLocation.shared.getCurrentLocation()
     }
     

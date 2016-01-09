@@ -20,24 +20,21 @@ class GeoLocation: NSObject, CLLocationManagerDelegate, UIAlertViewDelegate {
     static let shared = GeoLocation()
     
     private var manager: CLLocationManager!
-    private var locations: [CLLocation]
+    private var locations = [CLLocation]()
     private let geocoder = CLGeocoder()
     
-    var forwardGeocodedPlacemarks: [CLPlacemark]?
-    var forwardErrorString: String?
     var accuracy = kCLLocationAccuracyThreeKilometers
 
     var delegate: GeoLocationDelegate?
     
     override private init() {
         manager = CLLocationManager()
-        locations = [CLLocation(latitude: 28.6139, longitude: 77.2090)]
         
         super.init()
         
         manager.delegate = self
-        manager.requestAlwaysAuthorization()
         manager.desiredAccuracy = self.accuracy
+        manager.stopUpdatingLocation()
     }
     
     func requestAlwaysAuthorization() {
@@ -57,8 +54,11 @@ class GeoLocation: NSObject, CLLocationManagerDelegate, UIAlertViewDelegate {
     }
     
     func getCurrentLocation() {
-        checkLocationServices()
         manager.requestLocation()
+    }
+    
+    func startMonitoringSignificantLocationChanges() {
+        manager.startMonitoringSignificantLocationChanges()
     }
     
     private func checkLocationServices() {
