@@ -79,12 +79,8 @@ class ReverseGeocodingScreen: UIViewController, UITextFieldDelegate, GeoLocation
         goBackButton.addTarget(self, action: Selector("dismissScreen"), forControlEvents: .TouchUpInside)
     }
     
-    func dismissScreen() {
-        dismissViewControllerAnimated(true, completion: nil)
-    }
-    
     func findPlacemarkForCoordinates() {
-        GeoLocation.shared.findPlacemarkForCoordinates(CLLocationCoordinate2D(latitude: Double(latitudeTextField.text!)!, longitude: Double(longitudeTextField.text!)!), service: .Apple)
+        GeoLocation.shared.findPlacemarkForCoordinates(CLLocationCoordinate2D(latitude: Double(latitudeTextField.text!)!, longitude: Double(longitudeTextField.text!)!), service: .Google)
     }
 
     private func addAnnotationOnLocationCoordinate(coordinates: CLLocationCoordinate2D, name: String?, info: String?) {

@@ -54,10 +54,6 @@ class CurrentLocationScreen: UIViewController, GeoLocationDelegate {
         GeoLocation.shared.getCurrentLocation()
     }
     
-    func dismissScreen() {
-        dismissViewControllerAnimated(true, completion: nil)
-    }
-    
     func addAnnotationOnLocationCoordinate(coordinates: CLLocationCoordinate2D) {
         if let annotations = map.annotations as? [LocationAnnotation] {
             for annotation in annotations {

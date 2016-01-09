@@ -60,12 +60,8 @@ class ForwardGeocodingScreen: UIViewController, UISearchBarDelegate, GeoLocation
         searchBar.delegate = self
     }
     
-    func dismissScreen() {
-        dismissViewControllerAnimated(true, completion: nil)
-    }
-    
     func searchAddress() {
-        GeoLocation.shared.findPlacemarksForAddress(searchBar.text!, inRegion: nil, service: .Apple)
+        GeoLocation.shared.findPlacemarksForAddress(searchBar.text!, inRegion: nil, service: .Google)
     }
 
     private func addAnnotationOnLocationCoordinate(coordinates: CLLocationCoordinate2D, name: String?, info: String?) {
