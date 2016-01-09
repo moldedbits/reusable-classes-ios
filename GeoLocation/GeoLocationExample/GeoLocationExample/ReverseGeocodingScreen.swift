@@ -14,6 +14,7 @@ class ReverseGeocodingScreen: UIViewController, UITextFieldDelegate, GeoLocation
     private var map: MKMapView!
     
     private var screenHeight, screenWidth: CGFloat!
+    private var serviceType = MapService.Apple
     
     private let longitudeTextField = UITextField()
     private let latitudeTextField = UITextField()
@@ -38,7 +39,7 @@ class ReverseGeocodingScreen: UIViewController, UITextFieldDelegate, GeoLocation
     
     private func setupView() {
         addTextFields()
-        addButtons()
+        setupButtons()
         let tap = UITapGestureRecognizer(target: self, action: Selector("dismissKeyboard:"))
         view.addGestureRecognizer(tap)
     }
@@ -67,7 +68,7 @@ class ReverseGeocodingScreen: UIViewController, UITextFieldDelegate, GeoLocation
         view.addSubview(latitudeTextField)
     }
     
-    private func addButtons() {
+    private func setupButtons() {
         let currentLocationButton = UIButton(type: .DetailDisclosure)
         currentLocationButton.frame = CGRectMake(screenWidth * 0.8, screenHeight * 0.8, 50, screenHeight * 0.1)
         currentLocationButton.backgroundColor = UIColor.clearColor()
@@ -81,8 +82,22 @@ class ReverseGeocodingScreen: UIViewController, UITextFieldDelegate, GeoLocation
         goBackButton.addTarget(self, action: Selector("dismissScreen"), forControlEvents: .TouchUpInside)
     }
     
+    private func setupSwitch() {
+        let serviceSwitch = UISwitch(frame: CGRectMake(screenWidth * 0.4, screenHeight * 0.7, screenWidth * 0.2, screenHeight * 0.2))
+        serviceSwitch.addTarget(self, action: Selector("serviceSwitchValueChanged:"), forControlEvents: .ValueChanged)
+        view.addSubview(serviceSwitch)
+    }
+    
+    func serviceSwitchValueChanged(sender: UISwitch) {
+        if sender.on {
+            serviceType = .Apple
+        } else {
+            serviceType = .Google
+        }
+    }
+    
     func findPlacemarkForCoordinates() {
-        GeoLocation.shared.findPlacemarkForCoordinates(CLLocationCoordinate2D(latitude: Double(latitudeTextField.text!)!, longitude: Double(longitudeTextField.text!)!), service: .Google)
+        GeoLocation.shared.findPlacemarkForCoordinates(CLLocationCoordinate2D(latitude: Double(latitudeTextField.text!)!, longitude: Double(longitudeTextField.text!)!), service: serviceType)
     }
 
     private func addAnnotationOnLocationCoordinate(coordinates: CLLocationCoordinate2D, name: String?, info: String?) {
@@ -102,6 +117,7 @@ class ReverseGeocodingScreen: UIViewController, UITextFieldDelegate, GeoLocation
         if let foundPlacemarks = placemarks {
             for foundPlacemark in foundPlacemarks {
                 addAnnotationOnLocationCoordinate((foundPlacemark.location?.coordinate)!, name: foundPlacemark.name, info: foundPlacemark.administrativeArea)
+                print("\(foundPlacemark.name) \(foundPlacemark.administrativeArea)")                
             }
         } else if let errorOccured = error {
             displayError(errorOccured)
@@ -113,25 +129,5 @@ class ReverseGeocodingScreen: UIViewController, UITextFieldDelegate, GeoLocation
     func textFieldShouldReturn(textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         return true
-    }
-    
-    // MARK: - Map view delegates
-    func mapView(mapView: MKMapView, viewForAnnotation annotation: MKAnnotation) -> MKAnnotationView? {
-        if let annotation = annotation as? LocationAnnotation {
-            let identifier = "pin"
-            var view: MKPinAnnotationView
-            if let dequeuedView = mapView.dequeueReusableAnnotationViewWithIdentifier(identifier)
-                as? MKPinAnnotationView {
-                    dequeuedView.annotation = annotation
-                    view = dequeuedView
-            } else {
-                view = MKPinAnnotationView(annotation: annotation, reuseIdentifier: identifier)
-                view.canShowCallout = true
-                view.calloutOffset = CGPoint(x: -5, y: 5)
-                view.rightCalloutAccessoryView = UIButton(type: .DetailDisclosure) as UIView
-            }
-            return view
-        }
-        return nil
-    }
+    }    
 }
