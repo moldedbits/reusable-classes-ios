@@ -15,7 +15,7 @@ class ForwardGeocodingScreen: UIViewController, UISearchBarDelegate, GeoLocation
     private var screenHeight, screenWidth: CGFloat!
 
     private let searchBar = UISearchBar()
-    private var serviceType: MapService = .Apple
+    private var serviceType: MapService!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -24,7 +24,7 @@ class ForwardGeocodingScreen: UIViewController, UISearchBarDelegate, GeoLocation
 
         screenHeight = view.frame.height
         screenWidth = view.frame.width
-        view.backgroundColor = UIColor.blueColor()
+        view.backgroundColor = UIColor.whiteColor()
         
         setupMap()
         setupView()
@@ -68,13 +68,16 @@ class ForwardGeocodingScreen: UIViewController, UISearchBarDelegate, GeoLocation
         let serviceSwitch = UISwitch(frame: CGRectMake(screenWidth * 0.4, screenHeight * 0.7, screenWidth * 0.2, screenHeight * 0.2))
         serviceSwitch.addTarget(self, action: Selector("serviceSwitchValueChanged:"), forControlEvents: .ValueChanged)
         view.addSubview(serviceSwitch)
+        serviceType = .Apple
     }
     
     func serviceSwitchValueChanged(sender: UISwitch) {
-        if sender.on {
+        if !sender.on {
             serviceType = .Apple
+            view.backgroundColor = UIColor.whiteColor()
         } else {
             serviceType = .Google
+            view.backgroundColor = UIColor.blueColor()
         }
     }
     
@@ -104,8 +107,7 @@ class ForwardGeocodingScreen: UIViewController, UISearchBarDelegate, GeoLocation
     func geoLocationDidFindPlacemarks(placemarks: [CLPlacemark]?, withError error: NSError?, forAddressString address: String, inRegion region: CLRegion?) {
         if let foundPlacemarks = placemarks {
             for foundPlacemark in foundPlacemarks {
-                addAnnotationOnLocationCoordinate((foundPlacemark.location?.coordinate)!, name: foundPlacemark.name, info: foundPlacemark.administrativeArea)
-                print("\(foundPlacemark.name) \(foundPlacemark.administrativeArea)")
+                addAnnotationOnLocationCoordinate((foundPlacemark.location?.coordinate)!, name: (foundPlacemark.addressDictionary!["FormattedAddressLines"])?.componentsJoinedByString(", "), info: nil)
             }
         } else if let errorOccured = error {
             displayError(errorOccured)

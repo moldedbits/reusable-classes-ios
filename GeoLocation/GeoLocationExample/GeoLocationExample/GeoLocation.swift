@@ -231,7 +231,6 @@ extension GeoLocation {
                     } else if (error != nil) { // something went wrong with request
                         self.delegate?.geoLocationDidFindPlacemarks?(nil, withError: error, forCoordinates: coordinates)
                     } else { // we have some good results to show
-                        print(jsonResult.count)
                         let address = SwiftLocationParser()
                         address.parseGoogleLocationData(jsonResult)
                         let placemark = address.getPlacemark()
@@ -393,6 +392,7 @@ private class SwiftLocationParser: NSObject {
         let coordinate = CLLocationCoordinate2D(latitude: lat, longitude: lng)
         
         let placemark = MKPlacemark(coordinate: coordinate, addressDictionary: addressDict)
+
         return (placemark as CLPlacemark)
     }
     

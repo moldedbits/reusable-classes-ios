@@ -14,7 +14,7 @@ class ReverseGeocodingScreen: UIViewController, UITextFieldDelegate, GeoLocation
     private var map: MKMapView!
     
     private var screenHeight, screenWidth: CGFloat!
-    private var serviceType = MapService.Apple
+    private var serviceType: MapService!
     
     private let longitudeTextField = UITextField()
     private let latitudeTextField = UITextField()
@@ -26,7 +26,7 @@ class ReverseGeocodingScreen: UIViewController, UITextFieldDelegate, GeoLocation
         
         screenHeight = view.frame.height
         screenWidth = view.frame.width
-        view.backgroundColor = UIColor.blueColor()
+        view.backgroundColor = UIColor.whiteColor()
         
         setupMap()
         setupView()
@@ -40,6 +40,7 @@ class ReverseGeocodingScreen: UIViewController, UITextFieldDelegate, GeoLocation
     private func setupView() {
         addTextFields()
         setupButtons()
+        setupSwitch()
         let tap = UITapGestureRecognizer(target: self, action: Selector("dismissKeyboard:"))
         view.addGestureRecognizer(tap)
     }
@@ -86,13 +87,16 @@ class ReverseGeocodingScreen: UIViewController, UITextFieldDelegate, GeoLocation
         let serviceSwitch = UISwitch(frame: CGRectMake(screenWidth * 0.4, screenHeight * 0.7, screenWidth * 0.2, screenHeight * 0.2))
         serviceSwitch.addTarget(self, action: Selector("serviceSwitchValueChanged:"), forControlEvents: .ValueChanged)
         view.addSubview(serviceSwitch)
+        serviceType = .Apple
     }
     
     func serviceSwitchValueChanged(sender: UISwitch) {
-        if sender.on {
+        if !sender.on {
             serviceType = .Apple
+            view.backgroundColor = UIColor.whiteColor()
         } else {
             serviceType = .Google
+            view.backgroundColor = UIColor.blueColor()
         }
     }
     
@@ -116,8 +120,7 @@ class ReverseGeocodingScreen: UIViewController, UITextFieldDelegate, GeoLocation
     func geoLocationDidFindPlacemarks(placemarks: [CLPlacemark]?, withError error: NSError?, forCoordinates coordinates: CLLocationCoordinate2D) {
         if let foundPlacemarks = placemarks {
             for foundPlacemark in foundPlacemarks {
-                addAnnotationOnLocationCoordinate((foundPlacemark.location?.coordinate)!, name: foundPlacemark.name, info: foundPlacemark.administrativeArea)
-                print("\(foundPlacemark.name) \(foundPlacemark.administrativeArea)")                
+                addAnnotationOnLocationCoordinate((foundPlacemark.location?.coordinate)!, name: (foundPlacemark.addressDictionary!["FormattedAddressLines"])?.componentsJoinedByString(", "), info: nil)
             }
         } else if let errorOccured = error {
             displayError(errorOccured)
