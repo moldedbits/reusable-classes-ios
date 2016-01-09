@@ -20,7 +20,6 @@ class GeoLocation: NSObject, CLLocationManagerDelegate, UIAlertViewDelegate {
     static let shared = GeoLocation()
     
     private var manager: CLLocationManager!
-    private var locations = [CLLocation]()
     private let geocoder = CLGeocoder()
     
     var accuracy = kCLLocationAccuracyThreeKilometers
@@ -45,6 +44,10 @@ class GeoLocation: NSObject, CLLocationManagerDelegate, UIAlertViewDelegate {
         manager.requestWhenInUseAuthorization()
     }
     
+    func getCurrentLocation() {
+        manager.requestLocation()
+    }
+    
     func startUpdatingLocation() {
         manager.startUpdatingLocation()
     }
@@ -53,12 +56,44 @@ class GeoLocation: NSObject, CLLocationManagerDelegate, UIAlertViewDelegate {
         manager.stopUpdatingLocation()
     }
     
-    func getCurrentLocation() {
-        manager.requestLocation()
-    }
-    
     func startMonitoringSignificantLocationChanges() {
         manager.startMonitoringSignificantLocationChanges()
+    }
+    
+    func stopMonitoringSignificantLocationChanges() {
+        manager.stopMonitoringSignificantLocationChanges()
+    }
+    
+    func startMonitoringForRegion(region: CLRegion) {
+        manager.startMonitoringForRegion(region)
+    }
+    
+    func stopMonitoringForRegion(region: CLRegion) {
+        manager.stopMonitoringForRegion(region)
+    }
+    
+    func startMonitoringVisits() {
+        manager.startMonitoringVisits()
+    }
+    
+    func stopMonitoringVisits() {
+        manager.stopMonitoringVisits()
+    }
+    
+    func startRangingBeaconsInRegion(region: CLBeaconRegion) {
+        manager.startRangingBeaconsInRegion(region)
+    }
+    
+    func stopRangingBeaconsInRegion(region: CLBeaconRegion) {
+        manager.stopRangingBeaconsInRegion(region)
+    }
+
+    func startUpdatingHeading() {
+        manager.startUpdatingHeading()
+    }
+    
+    func stopUpdatingHeading() {
+        manager.stopUpdatingHeading()
     }
     
     private func checkLocationServices() {
@@ -101,17 +136,19 @@ class GeoLocation: NSObject, CLLocationManagerDelegate, UIAlertViewDelegate {
     // MARK: - Location Manager Delegates
     
     func locationManager(manager: CLLocationManager, didUpdateToLocation newLocation: CLLocation, fromLocation oldLocation: CLLocation) {
-        locations.append(newLocation)
-        delegate?.geoLocationDidUpdateCurrentLocations?(locations, withError: nil)
+        delegate?.geoLocationDidUpdateCurrentLocations?([newLocation], withError: nil)
     }
     
     func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        self.locations.append(locations.last!)
         delegate?.geoLocationDidUpdateCurrentLocations?(locations, withError: nil)
     }
     
     func locationManager(manager: CLLocationManager, didFailWithError error: NSError) {
         delegate?.geoLocationDidUpdateCurrentLocations?(nil, withError: error)
+    }
+    
+    func locationManager(manager: CLLocationManager, didChangeAuthorizationStatus status: CLAuthorizationStatus) {
+        
     }
 }
 
