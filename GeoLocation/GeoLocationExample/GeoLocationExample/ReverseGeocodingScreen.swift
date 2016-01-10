@@ -84,7 +84,7 @@ class ReverseGeocodingScreen: UIViewController, UITextFieldDelegate, GeoLocation
     }
     
     private func setupSwitch() {
-        let serviceSwitch = UISwitch(frame: CGRectMake(screenWidth * 0.4, screenHeight * 0.7, screenWidth * 0.2, screenHeight * 0.2))
+        let serviceSwitch = UISwitch(frame: CGRectMake(screenWidth * 0.45, screenHeight * 0.7, screenWidth * 0.2, screenHeight * 0.2))
         serviceSwitch.addTarget(self, action: Selector("serviceSwitchValueChanged:"), forControlEvents: .ValueChanged)
         view.addSubview(serviceSwitch)
         serviceType = .Apple
