@@ -16,6 +16,8 @@ class ViewController: UIViewController {
     let forwardGeocodingScreen = ForwardGeocodingScreen()
     let reverseGeoCodingScreen = ReverseGeocodingScreen()
     
+    public var map: MKMapView!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -59,7 +61,7 @@ class ViewController: UIViewController {
     }
 }
 
-extension UIViewController {
+extension UIViewController: MKMapViewDelegate {
     
     func displayError(error: NSError) {
         let alert = UIAlertController(title: "Error!", message: error.localizedDescription, preferredStyle: .Alert)
@@ -76,24 +78,23 @@ extension UIViewController {
     }
     
     //MARK: - Map view delegates
-    func mapView(mapView: MKMapView, viewForAnnotation annotation: MKAnnotation) -> MKAnnotationView? {
-        
-        if let annotation = annotation as? LocationAnnotation {
-            let identifier = "pin"
-            var view: MKPinAnnotationView
-            if let dequeuedView = mapView.dequeueReusableAnnotationViewWithIdentifier(identifier)
-                as? MKPinAnnotationView {
-                    dequeuedView.annotation = annotation
-                    view = dequeuedView
-            } else {
-                view = MKPinAnnotationView(annotation: annotation, reuseIdentifier: identifier)
-                view.canShowCallout = true
-                view.calloutOffset = CGPoint(x: -5, y: 5)
-                view.rightCalloutAccessoryView = UIButton(type: .DetailDisclosure) as UIView
-            }
-            return view
-        }
-        return nil
-    }
-
+//    public func mapView(mapView: MKMapView, viewForAnnotation annotation: MKAnnotation) -> MKAnnotationView? {
+//        
+//        if let annotation = annotation as? LocationAnnotation {
+//            let identifier = "pin"
+//            var view: MKPinAnnotationView
+//            if let dequeuedView = mapView.dequeueReusableAnnotationViewWithIdentifier(identifier)
+//                as? MKPinAnnotationView {
+//                    dequeuedView.annotation = annotation
+//                    view = dequeuedView
+//            } else {
+//                view = MKPinAnnotationView(annotation: annotation, reuseIdentifier: identifier)
+//                view.canShowCallout = true
+//                view.calloutOffset = CGPoint(x: -5, y: 5)
+//                view.rightCalloutAccessoryView = UIButton(type: .DetailDisclosure) as UIView
+//            }
+//            return view
+//        }
+//        return nil
+//    }
 }

@@ -169,11 +169,34 @@ extension GeoLocation {
     }
     
     private func googlePlacemarkForAddress(address: String) {
-        var APIURLString = "https://maps.googleapis.com/maps/api/geocode/json?address=\(address)" as NSString
-        APIURLString = APIURLString.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)!
-        let APIURL = NSURL(string: APIURLString as String)
+        var APIURLString = "https://maps.googleapis.com/maps/api/geocode/json?address=\(address)" as NSString?
+        APIURLString = APIURLString?.stringByAddingPercentEncodingWithAllowedCharacters(.URLQueryAllowedCharacterSet())
+        let APIURL = NSURL(string: APIURLString as! String)
         let APIURLRequest = NSURLRequest(URL: APIURL!)
-        NSURLConnection.sendAsynchronousRequest(APIURLRequest, queue: NSOperationQueue.mainQueue()) { (response, data, error) in
+//        let task = NSURLSession.sharedSession().dataTaskWithRequest(APIURLRequest) { data, response, error -> Void in
+//            if error != nil {
+//                self.delegate?.geoLocationDidFindPlacemarks?(nil, withError: error, forAddressString: address, inRegion: nil)
+//            } else {
+//                if data != nil {
+//                    let jsonResult = (try! NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.MutableContainers)) as! NSDictionary
+//                    let (errorJSON, noResults) = self.validateGoogleJSONResponse(jsonResult)
+//                    if noResults == true { // request is ok but not results are returned
+//                        let errorNoResult = NSError(domain: "No results found", code: 0, userInfo: nil)
+//                        self.delegate?.geoLocationDidFindPlacemarks?(nil, withError: errorNoResult, forAddressString: address, inRegion: nil)
+//                    } else if (errorJSON != nil) { // something went wrong with request
+//                        self.delegate?.geoLocationDidFindPlacemarks?(nil, withError: error, forAddressString: address, inRegion: nil)
+//                    } else { // we have some good results to show
+//                        let address1 = SwiftLocationParser()
+//                        address1.parseGoogleLocationData(jsonResult)
+//                        let placemark = address1.getPlacemark()
+//                        self.delegate?.geoLocationDidFindPlacemarks?([placemark], withError: nil, forAddressString: address, inRegion: nil)
+//                    }
+//                }
+//            }
+//        }
+//        task.resume()
+
+      NSURLConnection.sendAsynchronousRequest(APIURLRequest, queue: NSOperationQueue.mainQueue()) { (response, data, error) in
             if error != nil {
                 self.delegate?.geoLocationDidFindPlacemarks?(nil, withError: error, forAddressString: address, inRegion: nil)
             } else {
@@ -214,9 +237,9 @@ extension GeoLocation {
     }
     
     private func googlePlacemarkForCoordinates(coordinates: CLLocationCoordinate2D) {
-        var APIURLString = "https://maps.googleapis.com/maps/api/geocode/json?latlng=\(coordinates.latitude),\(coordinates.longitude)" as NSString
-        APIURLString = APIURLString.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)!
-        let APIURL = NSURL(string: APIURLString as String)
+        var APIURLString = "https://maps.googleapis.com/maps/api/geocode/json?latlng=\(coordinates.latitude),\(coordinates.longitude)" as NSString?
+        APIURLString = APIURLString?.stringByAddingPercentEncodingWithAllowedCharacters(.URLQueryAllowedCharacterSet())
+        let APIURL = NSURL(string: APIURLString as! String)
         let APIURLRequest = NSURLRequest(URL: APIURL!)
         NSURLConnection.sendAsynchronousRequest(APIURLRequest, queue: NSOperationQueue.mainQueue()) { (response, data, error) in
             if error != nil {
@@ -239,7 +262,6 @@ extension GeoLocation {
                 }
             }
         }
-
     }
     
     private func validateGoogleJSONResponse(jsonResult: NSDictionary!) -> (error: NSError?, noResults: Bool!) {

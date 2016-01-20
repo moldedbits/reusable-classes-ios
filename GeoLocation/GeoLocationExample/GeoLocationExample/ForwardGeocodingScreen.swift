@@ -93,6 +93,7 @@ class ForwardGeocodingScreen: UIViewController, UISearchBarDelegate, GeoLocation
                 }
             }
         }
+        print(coordinates, name, info)
         map.addAnnotation(LocationAnnotation(coordinate: coordinates, name: name, info: info))
     }
     

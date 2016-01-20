@@ -10,11 +10,11 @@ import UIKit
 import MapKit
 
 class ReverseGeocodingScreen: UIViewController, UITextFieldDelegate, GeoLocationDelegate {
-
-    private var map: MKMapView!
     
     private var screenHeight, screenWidth: CGFloat!
     private var serviceType: MapService!
+    
+    private var map = MKMapView()
     
     private let longitudeTextField = UITextField()
     private let latitudeTextField = UITextField()
@@ -34,6 +34,7 @@ class ReverseGeocodingScreen: UIViewController, UITextFieldDelegate, GeoLocation
     
     private func setupMap() {
         map = MKMapView(frame: CGRectMake(0, 0, screenWidth, screenHeight / 2))
+        map.delegate = self
         view.addSubview(map)
     }
     
