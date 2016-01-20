@@ -50,12 +50,8 @@ class CurrentLocationScreen: UIViewController, GeoLocationDelegate {
     }
     
     func gotoCurrentLocation() {
-        GeoLocation.shared.accuracy = kCLLocationAccuracyBest
+        GeoLocation.shared.accuracy = kCLLocationAccuracyNearestTenMeters
         GeoLocation.shared.getCurrentLocation()
-    }
-    
-    func dismissScreen() {
-        dismissViewControllerAnimated(true, completion: nil)
     }
     
     func addAnnotationOnLocationCoordinate(coordinates: CLLocationCoordinate2D) {
@@ -76,28 +72,7 @@ class CurrentLocationScreen: UIViewController, GeoLocationDelegate {
         if let updatedLocation = locations?.last {
             addAnnotationOnLocationCoordinate(updatedLocation.coordinate)
         } else if let errorOccured = error {
-            print(errorOccured.localizedDescription)
+            displayError(errorOccured)
         }
-    }
-
-    //MARK: - Map view delegates
-    func mapView(mapView: MKMapView, viewForAnnotation annotation: MKAnnotation) -> MKAnnotationView? {
-        
-        if let annotation = annotation as? LocationAnnotation {
-            let identifier = "pin"
-            var view: MKPinAnnotationView
-            if let dequeuedView = mapView.dequeueReusableAnnotationViewWithIdentifier(identifier)
-                as? MKPinAnnotationView {
-                    dequeuedView.annotation = annotation
-                    view = dequeuedView
-            } else {
-                view = MKPinAnnotationView(annotation: annotation, reuseIdentifier: identifier)
-                view.canShowCallout = true
-                view.calloutOffset = CGPoint(x: -5, y: 5)
-                view.rightCalloutAccessoryView = UIButton(type: .DetailDisclosure) as UIView
-            }
-            return view
-        }
-        return nil
     }
 }

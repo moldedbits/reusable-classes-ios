@@ -15,6 +15,7 @@ class ForwardGeocodingScreen: UIViewController, UISearchBarDelegate, GeoLocation
     private var screenHeight, screenWidth: CGFloat!
 
     private let searchBar = UISearchBar()
+    private var serviceType: MapService!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -23,7 +24,7 @@ class ForwardGeocodingScreen: UIViewController, UISearchBarDelegate, GeoLocation
 
         screenHeight = view.frame.height
         screenWidth = view.frame.width
-        view.backgroundColor = UIColor.blueColor()
+        view.backgroundColor = UIColor.whiteColor()
         
         setupMap()
         setupView()
@@ -37,6 +38,9 @@ class ForwardGeocodingScreen: UIViewController, UISearchBarDelegate, GeoLocation
     private func setupView() {
         setupButtons()
         setupSearchBar()
+        setupSwitch()
+        let tap = UITapGestureRecognizer(target: self, action: Selector("dismissKeyboard:"))
+        view.addGestureRecognizer(tap)
     }
     
     private func setupButtons() {
@@ -60,12 +64,25 @@ class ForwardGeocodingScreen: UIViewController, UISearchBarDelegate, GeoLocation
         searchBar.delegate = self
     }
     
-    func dismissScreen() {
-        dismissViewControllerAnimated(true, completion: nil)
+    private func setupSwitch() {
+        let serviceSwitch = UISwitch(frame: CGRectMake(screenWidth * 0.45, screenHeight * 0.7, screenWidth * 0.2, screenHeight * 0.2))
+        serviceSwitch.addTarget(self, action: Selector("serviceSwitchValueChanged:"), forControlEvents: .ValueChanged)
+        view.addSubview(serviceSwitch)
+        serviceType = .Apple
+    }
+    
+    func serviceSwitchValueChanged(sender: UISwitch) {
+        if !sender.on {
+            serviceType = .Apple
+            view.backgroundColor = UIColor.whiteColor()
+        } else {
+            serviceType = .Google
+            view.backgroundColor = UIColor.blueColor()
+        }
     }
     
     func searchAddress() {
-        GeoLocation.shared.findPlacemarksForAddress(searchBar.text!, inRegion: nil, service: .Apple)
+        GeoLocation.shared.findPlacemarksForAddress(searchBar.text!, inRegion: nil, service: serviceType)
     }
 
     private func addAnnotationOnLocationCoordinate(coordinates: CLLocationCoordinate2D, name: String?, info: String?) {
@@ -76,6 +93,7 @@ class ForwardGeocodingScreen: UIViewController, UISearchBarDelegate, GeoLocation
                 }
             }
         }
+        print(coordinates, name, info)
         map.addAnnotation(LocationAnnotation(coordinate: coordinates, name: name, info: info))
     }
     
@@ -90,30 +108,10 @@ class ForwardGeocodingScreen: UIViewController, UISearchBarDelegate, GeoLocation
     func geoLocationDidFindPlacemarks(placemarks: [CLPlacemark]?, withError error: NSError?, forAddressString address: String, inRegion region: CLRegion?) {
         if let foundPlacemarks = placemarks {
             for foundPlacemark in foundPlacemarks {
-                addAnnotationOnLocationCoordinate((foundPlacemark.location?.coordinate)!, name: foundPlacemark.name, info: foundPlacemark.administrativeArea)
+                addAnnotationOnLocationCoordinate((foundPlacemark.location?.coordinate)!, name: (foundPlacemark.addressDictionary!["FormattedAddressLines"])?.componentsJoinedByString(", "), info: nil)
             }
         } else if let errorOccured = error {
-            print(errorOccured.localizedDescription)
+            displayError(errorOccured)
         }
-    }
-    
-    // MARK: - Map view delegates
-    func mapView(mapView: MKMapView, viewForAnnotation annotation: MKAnnotation) -> MKAnnotationView? {
-        if let annotation = annotation as? LocationAnnotation {
-            let identifier = "pin"
-            var view: MKPinAnnotationView
-            if let dequeuedView = mapView.dequeueReusableAnnotationViewWithIdentifier(identifier)
-                as? MKPinAnnotationView {
-                    dequeuedView.annotation = annotation
-                    view = dequeuedView
-            } else {
-                view = MKPinAnnotationView(annotation: annotation, reuseIdentifier: identifier)
-                view.canShowCallout = true
-                view.calloutOffset = CGPoint(x: -5, y: 5)
-                view.rightCalloutAccessoryView = UIButton(type: .DetailDisclosure) as UIView
-            }
-            return view
-        }
-        return nil
     }
 }

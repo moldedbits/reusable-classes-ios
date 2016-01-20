@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import MapKit
 
 class ViewController: UIViewController {
     
@@ -14,6 +15,8 @@ class ViewController: UIViewController {
     let currentLocationScreen = CurrentLocationScreen()
     let forwardGeocodingScreen = ForwardGeocodingScreen()
     let reverseGeoCodingScreen = ReverseGeocodingScreen()
+    
+    public var map: MKMapView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -55,5 +58,43 @@ class ViewController: UIViewController {
 
             default: return
         }
+    }
+}
+
+extension UIViewController: MKMapViewDelegate {
+    
+    func displayError(error: NSError) {
+        let alert = UIAlertController(title: "Error!", message: error.localizedDescription, preferredStyle: .Alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .Default, handler: nil))
+        presentViewController(alert, animated: true, completion: nil)
+    }
+    
+    func dismissScreen() {
+        dismissViewControllerAnimated(true, completion: nil)
+    }
+    
+    func dismissKeyboard(sender: UIGestureRecognizer) {
+        view.endEditing(true)
+    }
+    
+    //MARK: - Map view delegates
+    public func mapView(mapView: MKMapView, viewForAnnotation annotation: MKAnnotation) -> MKAnnotationView? {
+        
+        if let annotation = annotation as? LocationAnnotation {
+            let identifier = "pin"
+            var view: MKPinAnnotationView
+            if let dequeuedView = mapView.dequeueReusableAnnotationViewWithIdentifier(identifier)
+                as? MKPinAnnotationView {
+                    dequeuedView.annotation = annotation
+                    view = dequeuedView
+            } else {
+                view = MKPinAnnotationView(annotation: annotation, reuseIdentifier: identifier)
+                view.canShowCallout = true
+                view.calloutOffset = CGPoint(x: -5, y: 5)
+                view.rightCalloutAccessoryView = UIButton(type: .DetailDisclosure) as UIView
+            }
+            return view
+        }
+        return nil
     }
 }
